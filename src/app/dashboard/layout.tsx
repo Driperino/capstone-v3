@@ -7,7 +7,7 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import PageTitle from '@/components/ui/custom/PageTitle'; // Import the client component
+import PageTitle from '@/components/custom/PageTitle'; // Import the client component
 
 export default async function LayoutDashboard({
   children,

@@ -4,7 +4,7 @@
 
 * {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+    'Liberation Mono', 'Courier New', monospace;
 }
 
 /* These are HSL values */
@@ -38,6 +38,14 @@
     --chart-4: 240 5.9% 70%;
     --chart-5: 240 5.9% 90%;
     --radius: 0.5rem;
+
+    /* Overlay and Modal Specific Variables */
+    --overlay-bg: rgba(255, 255, 255, 1);
+    --modal-bg: 0 0% 100%;
+    --modal-foreground: 240 10% 3.9%;
+    --modal-border: 240 5.9% 90%;
+
+    /* Sidebar Variables */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 240 10% 3.9%;
     --sidebar-primary: 240 5.9% 10%;
@@ -69,13 +77,18 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
     --chart-1: 200 100% 50%;
-    /* A vibrant blue */
     --chart-2: 130 100% 50%;
-    /* A vibrant green */
     --chart-3: 0 100% 50%;
-    /* A vibrant red */
     --chart-4: 240 5.9% 10%;
     --chart-5: 240 10% 3.9%;
+
+    /* Overlay and Modal Dark Mode */
+    --overlay-bg: rgba(0, 0, 0, 1);
+    --modal-bg: 240 10% 3.9%;
+    --modal-foreground: 0 0% 98%;
+    --modal-border: 240 3.7% 15.9%;
+
+    /* Sidebar Dark Mode */
     --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 0 0% 98%;
