@@ -3,7 +3,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-} from '@/components/custom/Modal';
+} from '@/components/modals/Modal';
 import { Button } from '@/components/ui/button';
 
 export default function ConfirmModal({

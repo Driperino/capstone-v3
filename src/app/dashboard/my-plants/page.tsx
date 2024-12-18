@@ -12,7 +12,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-} from '@/components/custom/Modal';
+} from '@/components/modals/Modal';
 
 export default function MyPlantsPage() {
   const [plants, setPlants] = useState<any[]>([]);
@@ -25,9 +25,20 @@ export default function MyPlantsPage() {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [logCareModalOpen, setLogCareModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
   const [plantToDelete, setPlantToDelete] = useState<string | null>(null);
+  const [currentPlantId, setCurrentPlantId] = useState<string | null>(null);
+  const [currentPlantData, setCurrentPlantData] = useState<any>(null);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
+  const [feedbackMessage, setFeedbackMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   // Fetch plants on mount
   useEffect(() => {
@@ -38,6 +49,8 @@ export default function MyPlantsPage() {
         setPlants(data);
       } catch (error) {
         console.error('Error fetching plants:', error);
+        showFeedback('error', 'Failed to fetch plants.');
+        s;
       } finally {
         setLoading(false);
       }
@@ -45,36 +58,39 @@ export default function MyPlantsPage() {
 
     fetchPlants();
 
-    // Deselect on outside click
+    // Deselect card when clicking outside
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target.closest('.plant-card')) setSelectedCardId(null);
     };
-
     document.addEventListener('click', handleOutsideClick);
     return () => document.removeEventListener('click', handleOutsideClick);
   }, []);
 
-  // Handle submit new plant
+  const showFeedback = (type: 'success' | 'error', text: string) => {
+    setFeedbackMessage({ type, text });
+    setTimeout(() => setFeedbackMessage(null), 3000); // Clear after 3 seconds
+  };
+
+  // Add Plant
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name || !file) return alert('Name and image are required!');
+    if (!name || !file) {
+      showFeedback('error', 'Name and image are required.');
+      return;
+    }
 
     try {
       const formData = new FormData();
       formData.append('file', file);
 
-      // Upload the file
       const uploadRes = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
-
       if (!uploadRes.ok) throw new Error('Image upload failed');
-      const uploadData = await uploadRes.json();
 
-      // Submit plant data
+      const uploadData = await uploadRes.json();
       const response = await fetch('/api/my-plants', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,21 +103,19 @@ export default function MyPlantsPage() {
       });
 
       if (!response.ok) throw new Error('Failed to save plant data');
-      const newPlant = await response.json();
 
+      const newPlant = await response.json();
       setPlants((prev) => [...prev, newPlant.data]);
       setModalOpen(false);
-      setName('');
-      setSpecies('');
-      setDescription('');
-      setFile(null);
+      resetForm();
+      showFeedback('success', 'Plant added successfully.');
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      showFeedback('error', 'Failed to add plant.');
     }
   };
 
-  // Handle delete logic
+  // Delete Plant
   const handleDelete = async () => {
     if (!plantToDelete) return;
 
@@ -109,92 +123,126 @@ export default function MyPlantsPage() {
       const res = await fetch(`/api/my-plants/${plantToDelete}`, {
         method: 'DELETE',
       });
-
       if (!res.ok) throw new Error('Failed to delete plant');
 
       setPlants((prev) => prev.filter((plant) => plant._id !== plantToDelete));
       setDeleteModalOpen(false);
       setPlantToDelete(null);
+      showFeedback('success', 'Plant deleted successfully.');
     } catch (error) {
       console.error('Error deleting plant:', error);
-      alert('Failed to delete plant. Try again.');
+      showFeedback('error', 'Failed to delete plant.');
     }
   };
 
-  const handleSelectCard = (id: string) => {
-    setSelectedCardId((prev) => (prev === id ? null : id));
+  // Edit Plant
+  const handleEditSubmit = async () => {
+    if (!currentPlantId) return;
+
+    try {
+      const response = await fetch(`/api/my-plants/${currentPlantId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, species, description }),
+      });
+
+      if (response.ok) {
+        const updatedPlant = await response.json();
+        setPlants((prev) =>
+          prev.map((plant) =>
+            plant._id === currentPlantId ? updatedPlant.data : plant
+          )
+        );
+        setEditModalOpen(false);
+        showFeedback('success', 'Plant updated successfully!');
+      } else {
+        throw new Error('Failed to update plant');
+      }
+    } catch (error) {
+      console.error('Error updating plant:', error);
+      showFeedback('error', 'Failed to update plant.');
+    }
   };
 
-  const handleEdit = (id: string) => {
-    console.log('Edit plant:', id);
-    // Placeholder for edit logic
+  const resetForm = () => {
+    setName('');
+    setSpecies('');
+    setDescription('');
+    setFile(null);
   };
 
-  const openDeleteModal = (id: string) => {
-    setPlantToDelete(id);
-    setDeleteModalOpen(true);
-  };
-
-  // Filter plants based on search
+  // Filter plants
   const filteredPlants = plants.filter((plant) =>
-    plant.name.toLowerCase().includes(searchQuery.toLowerCase())
+    plant?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="container mx-auto p-6">
+      {/* Feedback Message */}
+      {feedbackMessage && (
+        <div
+          className={`p-3 mb-4 text-sm rounded ${
+            feedbackMessage.type === 'error'
+              ? 'bg-red-100 text-red-600'
+              : 'bg-green-100 text-green-600'
+          }`}
+        >
+          {feedbackMessage.text}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        {/* Search Bar */}
         <Input
           placeholder="Search plants..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="flex-grow"
         />
-
-        {/* Add Plant Button */}
         <Button onClick={() => setModalOpen(true)} variant="default">
           <Plus className="mr-2 h-4 w-4" /> Add Plant
         </Button>
       </div>
 
-      {/* Plants Display */}
+      {/* Plant Cards */}
       {loading ? (
         <div className="flex justify-center items-center">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
-      ) : filteredPlants.length === 0 ? (
-        <p className="text-center text-muted-foreground">
-          No plants found. Add your first plant!
-        </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPlants.map((plant) => (
             <motion.div
               key={plant._id}
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
               <PlantCard
                 plant={plant}
                 isSelected={selectedCardId === plant._id}
-                onSelect={() => handleSelectCard(plant._id)}
-                onEdit={() => handleEdit(plant._id)}
-                onDelete={() => openDeleteModal(plant._id)}
+                onSelect={() => setSelectedCardId(plant._id)}
+                onEdit={() => {
+                  setCurrentPlantId(plant._id);
+                  setCurrentPlantData(plant);
+                  setEditModalOpen(true);
+                }}
+                onDelete={() => {
+                  setPlantToDelete(plant._id);
+                  setDeleteModalOpen(true);
+                }}
               />
             </motion.div>
           ))}
         </div>
       )}
 
-      {/* Modal for Adding Plants */}
+      {/* Add Plant Modal */}
       {isModalOpen && (
         <Modal onClose={() => setModalOpen(false)}>
           <ModalContent>
             <ModalHeader>Add a New Plant</ModalHeader>
             <ModalBody>
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+              <form onSubmit={handleSubmit} className="grid gap-4">
                 <Input
                   placeholder="Plant Name"
                   value={name}
@@ -214,16 +262,54 @@ export default function MyPlantsPage() {
                   type="file"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                 />
-                <Button type="submit" className="mt-2" variant="default">
-                  Submit
-                </Button>
+                <Button type="submit">Submit</Button>
               </form>
             </ModalBody>
           </ModalContent>
         </Modal>
       )}
 
-      {/* Modal for Deleting Plants */}
+      {/* Edit Plant Modal */}
+      {editModalOpen && (
+        <Modal onClose={() => setEditModalOpen(false)}>
+          <ModalContent>
+            <ModalHeader>Edit Plant</ModalHeader>
+            <ModalBody>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleEditSubmit();
+                }}
+                className="grid gap-4"
+              >
+                <Input
+                  placeholder="Plant Name"
+                  value={name || currentPlantData?.name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <Input
+                  placeholder="Species"
+                  value={species || currentPlantData?.species}
+                  onChange={(e) => setSpecies(e.target.value)}
+                />
+                <Textarea
+                  placeholder="Description"
+                  value={description || currentPlantData?.description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <div className="flex justify-end gap-2">
+                  <Button onClick={() => setEditModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Save</Button>
+                </div>
+              </form>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Delete Confirmation Modal */}
       {deleteModalOpen && (
         <Modal onClose={() => setDeleteModalOpen(false)}>
           <ModalContent>
@@ -234,16 +320,39 @@ export default function MyPlantsPage() {
                 be undone.
               </p>
               <div className="flex justify-end gap-2 mt-4">
-                <Button
-                  variant="secondary"
-                  onClick={() => setDeleteModalOpen(false)}
-                >
+                <Button onClick={() => setDeleteModalOpen(false)}>
                   Cancel
                 </Button>
                 <Button variant="destructive" onClick={handleDelete}>
                   Delete
                 </Button>
               </div>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Log Care Modal */}
+      {logCareModalOpen && (
+        <Modal onClose={() => setLogCareModalOpen(false)}>
+          <ModalContent>
+            <ModalHeader>Log Care Action</ModalHeader>
+            <ModalBody>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  saveCareAction({ action: 'Watered', date: new Date() });
+                }}
+                className="grid gap-4"
+              >
+                <Textarea placeholder="Notes (optional)" />
+                <div className="flex justify-end gap-2">
+                  <Button onClick={() => setLogCareModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Save</Button>
+                </div>
+              </form>
             </ModalBody>
           </ModalContent>
         </Modal>

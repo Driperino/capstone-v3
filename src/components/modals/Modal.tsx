@@ -36,6 +36,27 @@ export function ModalHeader({ children }: { children: ReactNode }) {
   );
 }
 
-export function ModalBody({ children }: { children: ReactNode }) {
-  return <div className="text-[--muted-foreground]">{children}</div>;
+export function ModalBody({
+  children,
+  feedbackMessage,
+}: {
+  children: ReactNode;
+  feedbackMessage?: { type: 'success' | 'error'; text: string } | null;
+}) {
+  return (
+    <div className="text-[--muted-foreground]">
+      {children}
+      {feedbackMessage && (
+        <div
+          className={`p-2 text-sm rounded mt-2 ${
+            feedbackMessage.type === 'error'
+              ? 'bg-red-100 text-red-600'
+              : 'bg-green-100 text-green-600'
+          }`}
+        >
+          {feedbackMessage.text}
+        </div>
+      )}
+    </div>
+  );
 }

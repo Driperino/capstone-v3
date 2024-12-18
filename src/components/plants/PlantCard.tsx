@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import PlantImage from './PlantImage';
+import PlantContent from './PlantContent';
+import PlantActions from './PlantActions';
 
 export default function PlantCard({
   plant,
   onEdit,
   onDelete,
+  onLogCare,
   isSelected,
   onSelect,
 }: {
   plant: any;
   onEdit: () => void;
   onDelete: (id: string) => void;
+  onLogCare: () => void;
   isSelected: boolean;
   onSelect: () => void;
 }) {
@@ -25,50 +28,14 @@ export default function PlantCard({
         onSelect();
       }}
     >
-      {/* Image */}
-      <CardHeader>
-        <Image
-          src={plant.imageUrl}
-          alt={plant.name}
-          width={400}
-          height={200}
-          className="object-cover w-full h-40"
-        />
-      </CardHeader>
-
-      {/* Content */}
-      <CardContent className="flex-1">
-        <CardTitle className="text-lg font-semibold text-primary">
-          {plant.name}
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold">Species:</span> {plant.species}
-        </p>
-        <p className="text-sm mt-2">{plant.description}</p>
-      </CardContent>
-
-      {/* Buttons */}
+      <PlantImage imageUrl={plant.imageUrl} name={plant.name} />
+      <PlantContent plant={plant} />
       {isSelected && (
-        <div className="flex justify-between gap-2 p-4 mt-auto bg-[--background] border-t-[--border]">
-          <Button
-            className="flex-1 bg-[--primary] text-[--primary-foreground] hover:bg-[--primary-foreground] hover:text-[--primary] px-2 py-1 text-xs"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            className="flex-1 bg-[--destructive] text-[--destructive-foreground] hover:opacity-80 px-2 py-1 text-xs"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(plant._id); // Trigger delete handler directly
-            }}
-          >
-            Delete
-          </Button>
-        </div>
+        <PlantActions
+          onEdit={onEdit}
+          onDelete={() => onDelete(plant._id)}
+          onLogCare={onLogCare}
+        />
       )}
     </Card>
   );
