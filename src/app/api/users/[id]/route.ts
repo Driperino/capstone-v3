@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { ObjectId } from 'mongodb';
+import clientPromise from '@/lib/mongodb'; // Assuming you're using this for direct MongoDB operations
 
 export async function PUT(
   req: Request,
@@ -62,10 +63,10 @@ export async function DELETE(
     }
 
     // Identify and delete related objects tied to the user
-    const client = await clientPromise; // Assuming you're using the MongoDB client
+    const client = await clientPromise;
     const db = client.db('leafmatrix'); // Replace with your database name
 
-    // Delete related objects in "plants" collection (or other relevant collections)
+    // Delete related objects in "plants" collection
     const relatedResult = await db.collection('plants').deleteMany({
       userId: new ObjectId(id),
     });
