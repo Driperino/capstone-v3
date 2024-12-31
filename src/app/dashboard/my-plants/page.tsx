@@ -25,7 +25,6 @@ export default function MyPlantsPage() {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  // const [logCareModalOpen, setLogCareModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [plantToDelete, setPlantToDelete] = useState<string | null>(null);
@@ -40,22 +39,25 @@ export default function MyPlantsPage() {
     text: string;
   } | null>(null);
 
-  // Fetch plants on mount
-  useEffect(() => {
-    async function fetchPlants() {
-      try {
-        const res = await fetch('/api/my-plants');
-        const data = await res.json();
-        setPlants(data);
-      } catch (error) {
-        console.error('Error fetching plants:', error);
-        showFeedback('error', 'Failed to fetch plants.');
-        s;
-      } finally {
-        setLoading(false);
-      }
-    }
+  const [isSubmitting, setSubmitting] = useState(false);
 
+  // Fetch plants
+  const fetchPlants = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/my-plants');
+      if (!res.ok) throw new Error('Failed to fetch plants');
+      const data = await res.json();
+      setPlants(data);
+    } catch (error) {
+      console.error('Error fetching plants:', error);
+      showFeedback('error', 'Failed to fetch plants.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPlants();
 
     // Deselect card when clicking outside
@@ -75,11 +77,14 @@ export default function MyPlantsPage() {
   // Add Plant
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent duplicate submissions
+
     if (!name || !file) {
       showFeedback('error', 'Name and image are required.');
       return;
     }
 
+    setSubmitting(true); // Prevent double submissions
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -109,9 +114,16 @@ export default function MyPlantsPage() {
       setModalOpen(false);
       resetForm();
       showFeedback('success', 'Plant added successfully.');
+      resetForm();
+      setModalOpen(false);
+
+      // Refetch plants after closing the modal
+      setTimeout(() => fetchPlants(), 0); // Use setTimeout to ensure modal closes fully before refetching
     } catch (error) {
       console.error('Error:', error);
       showFeedback('error', 'Failed to add plant.');
+    } finally {
+      setSubmitting(false); // Allow submissions again
     }
   };
 
@@ -123,7 +135,11 @@ export default function MyPlantsPage() {
       const res = await fetch(`/api/my-plants/${plantToDelete}`, {
         method: 'DELETE',
       });
-      if (!res.ok) throw new Error('Failed to delete plant');
+
+      if (!res.ok) {
+        const errorResponse = await res.json();
+        throw new Error(errorResponse.message || 'Failed to delete plant');
+      }
 
       setPlants((prev) => prev.filter((plant) => plant._id !== plantToDelete));
       setDeleteModalOpen(false);
@@ -331,32 +347,6 @@ export default function MyPlantsPage() {
           </ModalContent>
         </Modal>
       )}
-
-      {/* Log Care Modal
-      {logCareModalOpen && (
-        <Modal onClose={() => setLogCareModalOpen(false)}>
-          <ModalContent>
-            <ModalHeader>Log Care Action</ModalHeader>
-            <ModalBody>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  saveCareAction({ action: 'Watered', date: new Date() });
-                }}
-                className="grid gap-4"
-              >
-                <Textarea placeholder="Notes (optional)" />
-                <div className="flex justify-end gap-2">
-                  <Button onClick={() => setLogCareModalOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">Save</Button>
-                </div>
-              </form>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-      )} */}
     </div>
   );
 }

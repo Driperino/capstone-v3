@@ -108,36 +108,57 @@ export async function POST(req: Request) {
   }
 }
 
-// Helper function to generate a fake care schedule for a plant because i'm bad at life and couldnt figure out how to do it properly
+// Helper function to generate a fake care schedule for a plant with variability
 function generateFakeCareSchedule() {
   const schedule = [];
   const totalDays = 30;
 
-  // Add watering actions twice a week
+  const randomizeDay = (baseDay, range) =>
+    baseDay + Math.floor(Math.random() * range);
+
+  // Add watering actions with variability
   for (let i = 1; i <= totalDays; i++) {
     if (i % 3 === 0) {
-      schedule.push({ day: `Day ${i}`, action: 'Water the plant' });
+      schedule.push({
+        day: `Day ${randomizeDay(i, 2)}`, // Randomize by ±1 day
+        action: 'Water the plant',
+      });
     }
   }
 
-  // Add fertilizing action once a month
-  schedule.push({ day: 'Day 1', action: 'Apply fertilizer' });
+  // Add fertilizing action with slight variability
+  schedule.push({
+    day: `Day ${randomizeDay(1, 3)}`, // Randomize between Day 1 and Day 3
+    action: 'Apply fertilizer',
+  });
 
-  // Add pest check actions (4 times a month)
+  // Add pest check actions with variability
   for (let i = 1; i <= totalDays; i++) {
     if (i % 7 === 0) {
-      schedule.push({ day: `Day ${i}`, action: 'Check for pests' });
+      schedule.push({
+        day: `Day ${randomizeDay(i, 2)}`, // Randomize by ±1 day
+        action: 'Check for pests',
+      });
     }
   }
 
-  // Add disease check actions (4 times a month)
+  // Add disease check actions with variability
   for (let i = 2; i <= totalDays; i++) {
     if (i % 8 === 0) {
-      schedule.push({ day: `Day ${i}`, action: 'Check for diseases' });
+      schedule.push({
+        day: `Day ${randomizeDay(i, 2)}`, // Randomize by ±1 day
+        action: 'Check for diseases',
+      });
     }
   }
 
-  // Sort schedule by day for readability
+  // Shuffle the schedule for added randomness
+  for (let i = schedule.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [schedule[i], schedule[j]] = [schedule[j], schedule[i]];
+  }
+
+  // Sort the schedule to ensure days are in ascending order
   schedule.sort(
     (a, b) => parseInt(a.day.split(' ')[1]) - parseInt(b.day.split(' ')[1])
   );

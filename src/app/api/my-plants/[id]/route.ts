@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
+// DELETE handler for deleting a plant
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -48,6 +49,7 @@ export async function DELETE(
   }
 }
 
+// PATCH handler for updating a plant
 export async function PATCH(
   req: NextRequest,
   context: { params: { id: string } }

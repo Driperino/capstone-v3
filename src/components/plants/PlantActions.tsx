@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 export default function PlantActions({
   onEdit,
   onDelete,
-  onLogCare,
-}: {
+}: //onLogCare,
+{
   onEdit: () => void;
   onDelete: () => void;
   onLogCare: () => void;

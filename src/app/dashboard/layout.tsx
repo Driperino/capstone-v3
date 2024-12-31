@@ -26,7 +26,7 @@ export default async function LayoutDashboard({
       <SideBar />
       <SidebarInset>
         {/* Header */}
-        <header className="flex h-16 shrink-0 justify-between items-center gap-2 border-b border-border px-4 bg-background text-foreground">
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 justify-between items-center gap-2 border-b border-border px-4 bg-background text-foreground">
           <SidebarTrigger className="-ml-1" />
           <PageTitle /> {/* Dynamic page title */}
           <div className="flex items-center gap-4">
