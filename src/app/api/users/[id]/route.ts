@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { RouteHandlerContext } from 'next/server'; // Add this import
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { ObjectId } from 'mongodb';
-import clientPromise from '@/lib/mongodb'; // Assuming you're using this for direct MongoDB operations
+import clientPromise from '@/lib/mongodb';
 
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: RouteHandlerContext<{ id: string }>
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
@@ -43,10 +44,10 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: RouteHandlerContext<{ id: string }>
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
