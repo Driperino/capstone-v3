@@ -10,36 +10,11 @@ interface User {
   name: string;
   email: string;
   image: string;
-  emailVerified: boolean;
   timezone?: string;
 }
 
 const UserSettings = () => {
   const { data: session, status } = useSession();
-
-  const handleDeleteAccount = async () => {
-    const confirmed = confirm(
-      'Are you sure you want to delete your account? This action cannot be undone.'
-    );
-
-    if (!confirmed) return;
-
-    try {
-      const response = await fetch(`/api/users/${session?.user?.id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete account');
-      }
-
-      // Optionally, redirect to a different page after deletion
-      window.location.href = '/';
-    } catch (error) {
-      console.error('Error deleting account:', error);
-      alert('An error occurred while trying to delete your account.');
-    }
-  };
 
   if (status === 'loading') {
     return (
@@ -67,7 +42,6 @@ const UserSettings = () => {
     name: session.user.name || '',
     email: session.user.email || '',
     image: session.user.image || '',
-    emailVerified: session.user.emailVerified || false, // Customize this based on your auth configuration
     timezone: '', // Add timezone if available in the session
   };
 

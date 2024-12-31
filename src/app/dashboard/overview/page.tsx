@@ -23,7 +23,6 @@ type Plant = {
 export default function DashboardPage() {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -119,7 +118,7 @@ export default function DashboardPage() {
 
         {/* Today's Care Actions */}
         <Card className="p-4 col-span-2">
-          <h2 className="text-xl font-bold mb-4">Today's Care Actions</h2>
+          <h2 className="text-xl font-bold mb-4">Today&apos;s Care Actions</h2>
           <ul className="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
             {todaysActions.length > 0 ? (
               todaysActions.slice(0, 5).map((action, i) => {
