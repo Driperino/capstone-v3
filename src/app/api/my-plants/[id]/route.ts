@@ -29,7 +29,7 @@ export async function DELETE(
 
     const result = await db.collection('plants').deleteOne({
       _id: new ObjectId(plantId),
-      userId: session.user.id,
+      userId: new ObjectId(session.user.id),
     });
 
     if (result.deletedCount === 0) {
@@ -80,7 +80,7 @@ export async function PATCH(
     const result = await db
       .collection('plants')
       .updateOne(
-        { _id: new ObjectId(plantId), userId: session.user.id },
+        { _id: new ObjectId(plantId), userId: new ObjectId(session.user.id) },
         update
       );
 
