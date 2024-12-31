@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,7 +42,7 @@ export default function MyPlantsPage() {
   const [isSubmitting, setSubmitting] = useState(false);
 
   // Fetch plants
-  const fetchPlants = async () => {
+  const fetchPlants = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch('/api/my-plants');
@@ -55,7 +55,7 @@ export default function MyPlantsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPlants();
