@@ -48,11 +48,11 @@ const sidebarItems = [
     route: '/dashboard/settings/user-settings',
     icon: Users,
   },
-  {
-    name: 'Notifications',
-    route: '/dashboard/settings/notifications',
-    icon: Bell,
-  },
+  // {
+  //   name: 'Notifications',
+  //   route: '/dashboard/settings/notifications',
+  //   icon: Bell,
+  // },
 ];
 
 export default function SideBar() {

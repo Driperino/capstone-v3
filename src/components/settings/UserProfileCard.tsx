@@ -130,7 +130,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <Label
             htmlFor="profileImage"
             className="block text-sm font-medium text-secondary-foreground mb-2"
@@ -150,7 +150,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
               className="mt-4 w-24 h-24 rounded-full object-cover border border-border"
             />
           )}
-        </div>
+        </div> */}
       </div>
 
       <Button
@@ -161,9 +161,9 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
       </Button>
 
       <div className="mt-6 flex flex-col gap-4">
-        <Button className="bg-secondary text-secondary-foreground w-full py-2">
+        {/* <Button className="bg-secondary text-secondary-foreground w-full py-2">
           Send Verification Email
-        </Button>
+        </Button> */}
         <Button className="bg-destructive text-destructive-foreground hover:bg-destructive-foreground w-full py-2">
           Delete Account
         </Button>

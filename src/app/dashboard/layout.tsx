@@ -35,7 +35,7 @@ export default async function LayoutDashboard({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 mx-auto bg-card text-card-foreground p-6">
+        <main className="flex-1 w-full bg-card text-card-foreground p-6">
           {children}
         </main>
       </SidebarInset>
