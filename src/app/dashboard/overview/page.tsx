@@ -42,12 +42,12 @@ export default function DashboardPage() {
     fetchPlants();
   }, []);
 
-  const getRecentPlant = () =>
-    plants.reduce((latest, plant) =>
-      new Date(plant.datePlanted) > new Date(latest.datePlanted)
-        ? plant
-        : latest
-    );
+  // const getRecentPlant = () =>
+  //   plants.reduce((latest, plant) =>
+  //     new Date(plant.datePlanted) > new Date(latest.datePlanted)
+  //       ? plant
+  //       : latest
+  //   );
 
   const getTodaysActions = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -68,7 +68,7 @@ export default function DashboardPage() {
     );
   };
 
-  const recentPlant = plants.length > 0 ? getRecentPlant() : null;
+  //const recentPlant = plants.length > 0 ? getRecentPlant() : null;
   const todaysActions = getTodaysActions();
 
   if (loading) {

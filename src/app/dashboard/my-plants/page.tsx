@@ -67,7 +67,7 @@ export default function MyPlantsPage() {
     };
     document.addEventListener('click', handleOutsideClick);
     return () => document.removeEventListener('click', handleOutsideClick);
-  }, []);
+  }, [fetchPlants]);
 
   const showFeedback = (type: 'success' | 'error', text: string) => {
     setFeedbackMessage({ type, text });
