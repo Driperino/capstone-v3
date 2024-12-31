@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import {
   Collapsible,
   CollapsibleContent,
@@ -32,6 +33,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // Menu items
 const items = [
@@ -42,23 +44,26 @@ const items = [
 
 const sidebarItems = [
   {
-    name: 'Account Settings',
-    route: '/dashboard/settings/account',
-    icon: Settings,
+    name: 'User Management',
+    route: '/dashboard/settings/user-settings',
+    icon: Users,
   },
   {
     name: 'Notifications',
     route: '/dashboard/settings/notifications',
     icon: Bell,
   },
-  {
-    name: 'User Management',
-    route: '/dashboard/settings/user-settings',
-    icon: Users,
-  },
 ];
 
 export default function SideBar() {
+  const { data: session, status } = useSession();
+
+  const user = {
+    name: session?.user?.name || 'John Doe',
+    email: session?.user?.email || '',
+    avatar: session?.user?.image || '/avatars/john-doe.jpg',
+  };
+
   return (
     <>
       <Sidebar collapsible="icon">
@@ -129,18 +134,28 @@ export default function SideBar() {
         <SidebarFooter className="border-t border-sidebar-border">
           <SidebarMenu>
             <SidebarMenuItem>
-              <div className="flex items-center justify-between w-full px-4">
-                {/* Logout Button */}
+              <div className="flex items-center w-full py-2">
+                <Avatar className="h-8 w-8 mr-2">
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 mr-2 group-data-[collapsible=icon]:hidden">
+                  <p className="text-sm font-medium leading-none">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                </div>
                 <SidebarMenuButton asChild>
                   <Button
                     variant="ghost"
-                    className="justify-start w-full"
-                    onClick={() => signOut({ callbackUrl: '/' })} // Redirects to '/' after logout
+                    size="icon"
+                    className=""
+                    onClick={() => signOut({ callbackUrl: '/' })}
                   >
-                    <LogOut className="mr-2 size-4" />
-                    <span className="group-data-[collapsible=icon]:hidden">
-                      Logout
-                    </span>
+                    <div>
+                      <LogOut className="size-4" />
+                      <span className="sr-only">Logout</span>
+                    </div>
                   </Button>
                 </SidebarMenuButton>
               </div>

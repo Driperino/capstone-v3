@@ -20,7 +20,7 @@ export default function PlantActions({
       >
         Edit
       </Button>
-      <Button
+      {/* <Button
         className="flex-1 bg-[--accent] text-[--accent-foreground] hover:text-secondary px-2 py-1 text-xs"
         onClick={(e) => {
           e.stopPropagation();
@@ -28,7 +28,7 @@ export default function PlantActions({
         }}
       >
         Log Care
-      </Button>
+      </Button> */}
       <Button
         className="flex-1 bg-[--accent] text-[--accent-foreground] hover:text-secondary px-2 py-1 text-xs"
         onClick={(e) => {

@@ -25,7 +25,7 @@ export default function MyPlantsPage() {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [logCareModalOpen, setLogCareModalOpen] = useState(false);
+  // const [logCareModalOpen, setLogCareModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [plantToDelete, setPlantToDelete] = useState<string | null>(null);
@@ -332,7 +332,7 @@ export default function MyPlantsPage() {
         </Modal>
       )}
 
-      {/* Log Care Modal */}
+      {/* Log Care Modal
       {logCareModalOpen && (
         <Modal onClose={() => setLogCareModalOpen(false)}>
           <ModalContent>
@@ -356,7 +356,7 @@ export default function MyPlantsPage() {
             </ModalBody>
           </ModalContent>
         </Modal>
-      )}
+      )} */}
     </div>
   );
 }

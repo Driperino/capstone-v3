@@ -7,14 +7,14 @@ export default function PlantCard({
   plant,
   onEdit,
   onDelete,
-  onLogCare,
+  // onLogCare,
   isSelected,
   onSelect,
 }: {
   plant: any;
   onEdit: () => void;
   onDelete: (id: string) => void;
-  onLogCare: () => void;
+  // onLogCare: () => void;
   isSelected: boolean;
   onSelect: () => void;
 }) {
@@ -34,7 +34,7 @@ export default function PlantCard({
         <PlantActions
           onEdit={onEdit}
           onDelete={() => onDelete(plant._id)}
-          onLogCare={onLogCare}
+          // onLogCare={onLogCare}
         />
       )}
     </Card>

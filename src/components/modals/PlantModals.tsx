@@ -124,23 +124,23 @@ export function DeleteConfirmationModal({ isOpen, onClose, onDelete }: any) {
   );
 }
 
-export function LogCareModal({ isOpen, onClose, onSubmit }: any) {
-  return (
-    isOpen && (
-      <Modal onClose={onClose}>
-        <ModalContent>
-          <ModalHeader>Log Care Action</ModalHeader>
-          <ModalBody>
-            <form onSubmit={onSubmit} className="grid gap-4">
-              <Textarea placeholder="Notes (optional)" />
-              <div className="flex justify-end gap-2">
-                <Button onClick={onClose}>Cancel</Button>
-                <Button type="submit">Save</Button>
-              </div>
-            </form>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    )
-  );
-}
+// export function LogCareModal({ isOpen, onClose, onSubmit }: any) {
+//   return (
+//     isOpen && (
+//       <Modal onClose={onClose}>
+//         <ModalContent>
+//           <ModalHeader>Log Care Action</ModalHeader>
+//           <ModalBody>
+//             <form onSubmit={onSubmit} className="grid gap-4">
+//               <Textarea placeholder="Notes (optional)" />
+//               <div className="flex justify-end gap-2">
+//                 <Button onClick={onClose}>Cancel</Button>
+//                 <Button type="submit">Save</Button>
+//               </div>
+//             </form>
+//           </ModalBody>
+//         </ModalContent>
+//       </Modal>
+//     )
+//   );
+// }
