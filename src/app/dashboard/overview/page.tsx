@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import PlantContent from '@/components/plants/PlantContent';
-import Image from 'next/image';
 
 type CareAction = {
   day: string;
