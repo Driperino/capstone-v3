@@ -29,7 +29,7 @@ export async function DELETE(
 
     const result = await db.collection('plants').deleteOne({
       _id: new ObjectId(plantId),
-      userId: new ObjectId(session.user.id),
+      userId: session.user.id, // Using the string ID directly as stored in the plants collection
     });
 
     if (result.deletedCount === 0) {
@@ -80,7 +80,7 @@ export async function PATCH(
     const result = await db
       .collection('plants')
       .updateOne(
-        { _id: new ObjectId(plantId), userId: new ObjectId(session.user.id) },
+        { _id: new ObjectId(plantId), userId: session.user.id },
         update
       );
 
@@ -99,7 +99,7 @@ export async function PATCH(
   } catch (error) {
     console.error('Error updating plant:', error);
     return NextResponse.json(
-      { message: 'Failed to update plant' },
+      { message: 'Failed to delete plant' },
       { status: 500 }
     );
   }
