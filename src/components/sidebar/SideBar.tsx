@@ -12,7 +12,6 @@ import {
 import {
   ChevronDown,
   Sprout,
-  Bell,
   Users,
   Leaf,
   Home,

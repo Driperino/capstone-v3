@@ -3,8 +3,6 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
 import UserProfileCard from '@/components/settings/UserProfileCard';
-import VerifyEmailButton from '@/components/settings/VerifyEmailButton';
-import { Button } from '@/components/ui/button';
 
 // Define a User type
 interface User {
@@ -35,7 +33,6 @@ const UserSettings = () => {
         throw new Error('Failed to delete account');
       }
 
-      alert('Account successfully deleted.');
       // Optionally, redirect to a different page after deletion
       window.location.href = '/';
     } catch (error) {

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlantSearch from '@/components/routines/PlantSearch';
-import CareCalendar from '@/components/routines/CareCalendar';
 import CareTimeline from '@/components/routines/CareTimeline';
 import DayActionsTimeline from '@/components/routines/DayActionsTimeline';
 
