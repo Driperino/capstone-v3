@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { RouteHandlerContext } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 import clientPromise from '@/lib/mongodb';
@@ -7,7 +8,7 @@ import { ObjectId } from 'mongodb';
 // DELETE handler for deleting a plant
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteHandlerContext<{ id: string }>
 ) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -15,7 +16,7 @@ export async function DELETE(
   }
 
   try {
-    const plantId = params.id;
+    const plantId = context.params.id;
 
     if (!ObjectId.isValid(plantId)) {
       return NextResponse.json(
@@ -52,7 +53,7 @@ export async function DELETE(
 // PATCH handler for updating a plant
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: RouteHandlerContext<{ id: string }>
 ) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
