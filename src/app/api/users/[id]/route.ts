@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
+import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
+import { ObjectId } from 'mongodb';
 
 export async function PUT(
   req: Request,
@@ -8,7 +9,7 @@ export async function PUT(
 ) {
   const { id } = params;
 
-  if (!id) {
+  if (!ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
   }
 
@@ -32,7 +33,7 @@ export async function PUT(
       user: updatedUser,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating user:', error);
     return NextResponse.json(
       { error: 'Failed to update user' },
       { status: 500 }
@@ -46,29 +47,45 @@ export async function DELETE(
 ) {
   const { id } = params;
 
-  if (!id) {
-    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+  if (!ObjectId.isValid(id)) {
+    return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
   }
 
+  await dbConnect();
+
   try {
-    const client = await clientPromise;
-    const db = client.db('myDatabase'); // Replace with your database name
-    const collection = db.collection('users');
+    // Delete the user
+    const user = await User.findByIdAndDelete(id);
 
-    const result = await collection.deleteOne({ _id: id });
-
-    if (result.deletedCount === 0) {
+    if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Identify and delete related objects tied to the user
+    const client = await clientPromise; // Assuming you're using the MongoDB client
+    const db = client.db('leafmatrix'); // Replace with your database name
+
+    // Delete related objects in "plants" collection (or other relevant collections)
+    const relatedResult = await db.collection('plants').deleteMany({
+      userId: new ObjectId(id),
+    });
+
+    console.log(
+      `Deleted ${relatedResult.deletedCount} related objects for user ID: ${id}`
+    );
+
     return NextResponse.json(
-      { message: 'User deleted successfully' },
+      {
+        message: 'User and related objects deleted successfully',
+        userId: id,
+        deletedObjectsCount: relatedResult.deletedCount,
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error('Error deleting user and related objects:', error);
     return NextResponse.json(
-      { error: 'Failed to delete user' },
+      { error: 'Failed to delete user and related objects' },
       { status: 500 }
     );
   }

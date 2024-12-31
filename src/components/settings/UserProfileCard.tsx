@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import TimezoneDropdown from '@/components/settings/TimeZoneDropdown';
+import router from 'next/router';
 
 interface UserProfileCardProps {
   user: {
@@ -76,6 +77,23 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
       console.error('Error saving user data:', error);
     }
   };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch(`/api/users/${user._id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete account');
+      }
+
+      router().push('/');
+    } catch (error) {
+      setError('Failed to delete account. Please try again later.');
+      console.error('Error deleting account:', error);
+    }
+  }; // <-- Close handleDeleteAccount here
 
   return (
     <div className="p-6 rounded-lg shadow-md bg-card text-card-foreground w-full max-w-xl mx-auto">
@@ -161,10 +179,10 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
       </Button>
 
       <div className="mt-6 flex flex-col gap-4">
-        {/* <Button className="bg-secondary text-secondary-foreground w-full py-2">
-          Send Verification Email
-        </Button> */}
-        <Button className="bg-destructive text-destructive-foreground hover:bg-destructive-foreground w-full py-2">
+        <Button
+          className="bg-destructive text-destructive-foreground hover:bg-destructive-foreground w-full py-2"
+          onClick={handleDeleteAccount}
+        >
           Delete Account
         </Button>
       </div>
