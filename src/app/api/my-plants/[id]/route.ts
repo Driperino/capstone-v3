@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 // DELETE handler for deleting a plant
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -15,7 +15,7 @@ export async function DELETE(
   }
 
   try {
-    const plantId = params.id;
+    const { id: plantId } = await context.params;
 
     if (!ObjectId.isValid(plantId)) {
       return NextResponse.json(
@@ -52,7 +52,7 @@ export async function DELETE(
 // PATCH handler for updating a plant
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -60,7 +60,7 @@ export async function PATCH(
   }
 
   try {
-    const plantId = params.id;
+    const { id: plantId } = await context.params;
     const body = await req.json();
 
     if (!ObjectId.isValid(plantId)) {
