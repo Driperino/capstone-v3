@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 
-//all of a sudden this is causing the build to fail????
+//nvm fixed....
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
