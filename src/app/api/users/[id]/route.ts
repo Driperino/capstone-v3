@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RouteHandlerContext } from 'next/server'; // Add this import
-import dbConnect from '@/lib/mongodb';
+import { dbConnect } from '@/lib/mongodb';
+import clientPromise from '@/lib/mongodb';
 import User from '@/models/User';
 import { ObjectId } from 'mongodb';
-import clientPromise from '@/lib/mongodb';
 
 export async function PUT(
   req: NextRequest,
-  context: RouteHandlerContext<{ id: string }>
+  { params }: { params: Promise<{ id: string }> } // Wrap params in Promise
 ) {
-  const { id } = context.params;
+  const { id } = await params; // Await the params
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
@@ -45,9 +44,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  context: RouteHandlerContext<{ id: string }>
+  { params }: { params: Promise<{ id: string }> } // Wrap params in Promise
 ) {
-  const { id } = context.params;
+  const { id } = await params; // Await the params
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });

@@ -3,26 +3,28 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useSession } from 'next-auth/react';
 
-type Plant = {
-  _id: string;
+export type Plant = {
+  _id: string; // Ensure _id is always a string
   name: string;
   species: string;
-  description: string;
+  description?: string; // Optional
   imageUrl?: string;
+  careSchedule?: { day: string; action: string }[]; // Optional care schedule
 };
 
 interface Props {
+  plants?: Plant[]; // Optional external plant data
   onSelect: (plant: Plant) => void;
 }
 
-const PlantSearch: React.FC<Props> = ({ onSelect }) => {
+const PlantSearch: React.FC<Props> = ({ plants: externalPlants, onSelect }) => {
   const { data: session, status } = useSession();
-  const [plants, setPlants] = useState<Plant[]>([]);
+  const [plants, setPlants] = useState<Plant[]>(externalPlants || []);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!externalPlants);
 
   const fetchPlants = useCallback(async () => {
-    if (status !== 'authenticated') {
+    if (status !== 'authenticated' || externalPlants) {
       setLoading(false);
       return;
     }
@@ -32,18 +34,28 @@ const PlantSearch: React.FC<Props> = ({ onSelect }) => {
       if (!response.ok) {
         throw new Error('Failed to fetch plants');
       }
-      const data = await response.json();
-      setPlants(data);
+      const data: any[] = await response.json();
+      const mappedPlants: Plant[] = data.map((plant) => ({
+        _id: plant._id || `generated-id-${Math.random()}`, // Fallback ID
+        name: plant.name,
+        species: plant.species,
+        description: plant.description || 'No description available.',
+        imageUrl: plant.imageUrl || '/placeholder.jpg',
+        careSchedule: plant.careSchedule || [], // Default empty care schedule
+      }));
+      setPlants(mappedPlants);
     } catch (error) {
       console.error('Error fetching plants:', error);
     } finally {
       setLoading(false);
     }
-  }, [status]);
+  }, [status, externalPlants]);
 
   useEffect(() => {
-    fetchPlants();
-  }, [fetchPlants]);
+    if (!externalPlants) {
+      fetchPlants();
+    }
+  }, [fetchPlants, externalPlants]);
 
   const filteredPlants = plants.filter((plant) =>
     plant.name.toLowerCase().includes(search.toLowerCase())
@@ -58,7 +70,7 @@ const PlantSearch: React.FC<Props> = ({ onSelect }) => {
   }
 
   return (
-    <div className="flex flex-col h-full pt-2 ">
+    <div className="flex flex-col h-full pt-2">
       <Input
         type="text"
         placeholder="Search plants..."
@@ -75,7 +87,7 @@ const PlantSearch: React.FC<Props> = ({ onSelect }) => {
               className="p-2 cursor-pointer hover:bg-muted transition flex items-center gap-4"
             >
               <img
-                src={plant.imageUrl}
+                src={plant.imageUrl || '/placeholder.jpg'} // Fallback for missing images
                 alt={plant.name}
                 className="w-16 h-16 object-cover rounded"
               />

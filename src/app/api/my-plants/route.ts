@@ -35,7 +35,10 @@ export async function GET() {
         updatedFields.description = faker.lorem.sentence();
       }
       if (!plant.imageUrl) {
-        updatedFields.imageUrl = faker.image.nature(200, 200, true);
+        updatedFields.imageUrl = faker.image.urlPicsumPhotos({
+          width: 200,
+          height: 200,
+        });
       }
 
       // If there are updates, apply them to the database
@@ -54,8 +57,10 @@ export async function GET() {
     return NextResponse.json(normalizedPlants, { status: 200 });
   } catch (error) {
     console.error('Error fetching or updating plants:', error);
+    const errorMessage =
+      error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { message: 'Failed to fetch plants', error: error.message },
+      { message: 'Failed to fetch plants', error: errorMessage },
       { status: 500 }
     );
   }
@@ -88,7 +93,8 @@ export async function POST(req: Request) {
       growthStages: [],
       careSchedule: generateFakeCareSchedule(),
       careHistory: [],
-      imageUrl: imageUrl || faker.image.nature(200, 200, true),
+      imageUrl:
+        imageUrl || faker.image.urlPicsumPhotos({ width: 200, height: 200 }),
     };
 
     const client = await clientPromise;
@@ -101,8 +107,10 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     console.error('Error creating plant:', error);
+    const errorMessage =
+      error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { message: 'Failed to add plant', error: error.message },
+      { message: 'Failed to add plant', error: errorMessage },
       { status: 500 }
     );
   }
@@ -113,7 +121,7 @@ function generateFakeCareSchedule() {
   const schedule = [];
   const totalDays = 30;
 
-  const randomizeDay = (baseDay, range) =>
+  const randomizeDay = (baseDay: number, range: number): number =>
     baseDay + Math.floor(Math.random() * range);
 
   // Add watering actions with variability

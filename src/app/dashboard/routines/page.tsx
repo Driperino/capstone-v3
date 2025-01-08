@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import PlantSearch from '@/components/routines/PlantSearch';
+import PlantSearch, { Plant } from '@/components/routines/PlantSearch';
 import CareTimeline from '@/components/routines/CareTimeline';
 import DayActionsTimeline from '@/components/routines/DayActionsTimeline';
 
 export default function PlantCarePage() {
-  const [plants, setPlants] = useState([]); // Plant data from the database
-  const [selectedPlant, setSelectedPlant] = useState(null); // Selected plant for CareTimeline
-  const [selectedActions, setSelectedActions] = useState([]); // Actions for DayActionsTimeline
+  const [plants, setPlants] = useState<Plant[]>([]);
+  const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
+  const [selectedActions, setSelectedActions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,8 +19,18 @@ export default function PlantCarePage() {
         if (!response.ok) {
           throw new Error('Failed to fetch plants');
         }
-        const data = await response.json();
-        setPlants(data);
+
+        // Map API response to match the Plant type
+        const data: any[] = await response.json();
+        const mappedPlants: Plant[] = data.map((plant) => ({
+          _id: plant._id || `generated-id-${Math.random()}`, // Ensure _id is a string
+          name: plant.name,
+          species: plant.species,
+          description: plant.description || 'No description provided',
+          imageUrl: plant.imageUrl || '/placeholder.jpg', // Fallback image
+          careSchedule: plant.careSchedule || [], // Default empty care schedule
+        }));
+        setPlants(mappedPlants);
       } catch (error) {
         console.error('Error fetching plants:', error);
       } finally {
@@ -47,7 +57,7 @@ export default function PlantCarePage() {
             plants={plants}
             onSelect={(plant) => {
               setSelectedPlant(plant);
-              setSelectedActions([]); // Clear actions when a plant is selected
+              setSelectedActions([]);
             }}
           />
         </Card>

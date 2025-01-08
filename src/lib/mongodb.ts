@@ -5,7 +5,7 @@ const options = {};
 
 if (!uri) throw new Error('Please define the MONGODB_URI environment variable');
 
-let client: MongoClient;
+let client: MongoClient | null = null;
 let clientPromise: Promise<MongoClient>;
 
 // Ensure MongoDB connection is reused in development
@@ -18,6 +18,11 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   client = new MongoClient(uri, options);
   clientPromise = client.connect();
+}
+
+export async function dbConnect() {
+  // Await the clientPromise and return the MongoClient
+  return clientPromise;
 }
 
 export default clientPromise;

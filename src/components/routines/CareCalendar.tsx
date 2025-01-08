@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
+import { DateRange } from 'react-day-picker'; // Import the DateRange type
 
 type CareAction = {
   day: string;
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const CareCalendar: React.FC<Props> = ({ plants, onDateSelect }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   // Generate a map of actions by date
   const actionsByDate: Record<string, { plant: Plant; action: CareAction }[]> =
@@ -56,11 +57,18 @@ const CareCalendar: React.FC<Props> = ({ plants, onDateSelect }) => {
   });
 
   // Handle date selection
-  const handleDateSelect = (date: Date) => {
-    const dateKey = date.toISOString().split('T')[0];
+  const handleDateSelect = (range: DateRange | undefined) => {
+    if (!range?.from) {
+      console.log('No date selected');
+      setSelectedDate(undefined);
+      onDateSelect([]);
+      return;
+    }
+
+    const dateKey = range.from.toISOString().split('T')[0];
     console.log('Selected date:', dateKey);
 
-    setSelectedDate(date);
+    setSelectedDate(range.from);
 
     const actionsForDate = actionsByDate[dateKey] || [];
     console.log('Actions for selected date:', actionsForDate);
@@ -71,12 +79,11 @@ const CareCalendar: React.FC<Props> = ({ plants, onDateSelect }) => {
   return (
     <div className="w-full">
       <Calendar
-        selected={selectedDate}
-        onSelect={(date) => {
-          console.log('Date clicked:', date);
-          handleDateSelect(date);
+        selected={selectedDate} // Now uses Date | undefined
+        onSelect={(range: DateRange | undefined) => {
+          handleDateSelect(range);
         }}
-        dayContentRenderer={(day) => {
+        renderDay={(day) => {
           const dateKey = day.toISOString().split('T')[0];
           const hasActions = actionsByDate[dateKey]?.length > 0;
 

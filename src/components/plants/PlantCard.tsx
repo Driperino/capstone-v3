@@ -31,11 +31,7 @@ export default function PlantCard({
       <PlantImage imageUrl={plant.imageUrl} name={plant.name} />
       <PlantContent plant={plant} />
       {isSelected && (
-        <PlantActions
-          onEdit={onEdit}
-          onDelete={() => onDelete(plant._id)}
-          // onLogCare={onLogCare}
-        />
+        <PlantActions onEdit={onEdit} onDelete={() => onDelete(plant._id)} />
       )}
     </Card>
   );

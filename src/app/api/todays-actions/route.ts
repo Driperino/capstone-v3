@@ -40,7 +40,7 @@ export async function GET(): Promise<NextResponse> {
             actionDate: actionDate.toISOString().split('T')[0],
           };
         })
-        .filter((task) => task.actionDate === todayISO)
+        .filter((task: { actionDate: string }) => task.actionDate === todayISO)
     );
 
     return NextResponse.json(todaysActions, { status: 200 });
