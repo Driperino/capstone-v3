@@ -1,8 +1,8 @@
-## **Plant Care Tracker Development Journal**
+# **Plant Care Tracker Development Journal**
 
 ---
 
-### **Project Vision**
+## **Project Vision**
 
 The Plant Care Tracker aimed to create a comprehensive platform for managing plant care routines. It would offer tools like plant profiles, care schedules, growth tracking, and troubleshooting, all within a sleek, user-friendly interface. The project set out to combine modern web development practices, innovative features, and a user-centered design philosophy.
 
@@ -24,7 +24,7 @@ The project began with ambitious goals:
 
 ---
 
-#### **Phase 1: December 6 – Early Exploration and Design**
+#### **Phase 1: November 20 – Early Exploration and Design**
 
 - **Early Priorities**:
   - Focused on dashboard UI and basic functionality:
@@ -39,7 +39,7 @@ The project began with ambitious goals:
 
 ---
 
-#### **Phase 2: December 12 – Midway Struggles**
+#### **Phase 2: December 3 – Midway Struggles**
 
 - **API Challenges**:
   - Struggled with API design and considered a complete rewrite. Progress felt slow and disorganized.
@@ -89,6 +89,14 @@ The project began with ambitious goals:
 
 ---
 
+#### **Phase 6: January 1–8 – Deployment Struggles**
+
+The deployment process has been one of the most frustrating and demoralizing experiences of the entire project. Initially, I started by linking the repo to Vercel and attempting to deploy after adding all my environment variables. After 18 failed builds, I decided to try building the project locally. Over the course of eight days, I wrestled with linting errors and type errors. Eventually, I disabled linting and type-checking during the build process just to achieve a successful build.
+
+Upon deployment, I encountered another major issue: none of the authentication functions worked as expected. Logging in resulted in timeouts, even though the functions worked perfectly in Postman. Vercel would time out the requests before they could complete. This remains an unresolved issue, leaving me at a loss for a solution.
+
+---
+
 ### **Challenges and Reflections**
 
 1. **Achievement System Detour**:
@@ -107,7 +115,11 @@ The project began with ambitious goals:
    - The combination of learning Next.js and TypeScript while building a complex app was overly ambitious for the timeline. Key features like routines, notifications, and dashboards had to be cut or scaled back.
 
 4. **Technical Hurdles**:
+
    - Struggled with hydration errors and backend implementation, requiring frequent debugging and refactoring.
+
+5. **Deployment Issues**:
+   - The deployment process was fraught with challenges, including 18 failed builds, linting and type errors, and unresolved authentication timeouts on Vercel, leaving the project in a frustrating state.
 
 ---
 
